@@ -50,7 +50,7 @@ public class EmployeeControllerMockTest {
 
     Employee mockEmployee = new Employee(10001L,"Manbo","Manager","Finance","114514@gmail.com", mockProjects);
 
-    String exampleEmployeeJson = "{\"id\":10001,\"name\":\"Manbo\",\"position\":\"Manager\",\"department\":\"Finance\",\"email\":\"114514@gmail.com\",\"projects\":[{\"id\":1,\"name\":\"Project Alpha\",\"describe\":\"Description of Project Alpha\"},{\"id\":2,\"name\":\"Project Beta\",\"describe\":\"Description of Project Beta\"}]}";
+    String exampleEmployeeJson = "{\"id\":10001,\"name\":\"Manbo\",\"position\":\"Manager\",\"department\":\"Finance\",\"email\":\"114514@gmail.com\",\"projects\":[{\"id\":1,\"name\":\"Project Alpha\",\"description\":\"Description of Project Alpha\"},{\"id\":2,\"name\":\"Project Beta\",\"description\":\"Description of Project Beta\"}]}";
 
     @Test
     public void getEmployee() throws Exception {

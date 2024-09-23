@@ -1,11 +1,10 @@
 package com.employeemanagement.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -22,13 +21,22 @@ public class User {
     @Column(name="user_passwd")
     private String password;
 
+    @ElementCollection(fetch= FetchType.EAGER)
+    @CollectionTable(
+            name="roles",
+            joinColumns = @JoinColumn(name="user_id")
+    )
+    @Column(name="user_role")
+    private List<String> roles;
+
     public User() {
     }
 
-    public User(Integer id, String username, String password) {
+    public User(Integer id, String username, String password, List<String> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.roles = roles;
     }
 
     public Integer getId() {
@@ -54,4 +62,13 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
 }

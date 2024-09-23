@@ -5,6 +5,7 @@ import com.employeemanagement.EmployeeManagementApplication;
 import com.employeemanagement.exception.EmployeeNotFoundException;
 import com.employeemanagement.model.Employee;
 import com.employeemanagement.model.Project;
+import com.employeemanagement.sercurity.TestSecurityConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONException;
 import org.junit.jupiter.api.MethodOrderer;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -31,8 +34,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = EmployeeManagementApplication.class,webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {EmployeeManagementApplication.class, TestSecurityConfig.class},webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
+@EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class})
 @ActiveProfiles("test")
 public class EmployeeControllerIntegrationTest extends BaseIntegrationTest {
     @LocalServerPort
