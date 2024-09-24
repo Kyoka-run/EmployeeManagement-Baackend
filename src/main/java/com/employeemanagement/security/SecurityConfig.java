@@ -37,6 +37,7 @@ public class SecurityConfig {
 				.antMatchers("/login", "/register").permitAll()
 				.and()
 				.authorizeRequests()
+				.antMatchers("/admin/**").hasAuthority("ADMIN")
 				.anyRequest().authenticated()
 				.and()
 				.csrf().disable()
@@ -50,6 +51,9 @@ public class SecurityConfig {
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 				.permitAll()
+				.and()
+				.exceptionHandling()
+				.accessDeniedPage("/accessDenied")
 				.and()
 				.authenticationProvider(authenticationProvider());
 

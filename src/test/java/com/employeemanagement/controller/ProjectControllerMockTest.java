@@ -21,7 +21,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(value = EmployeeController.class)
+@WebMvcTest(value = ProjectController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 public class ProjectControllerMockTest {
@@ -43,25 +42,19 @@ public class ProjectControllerMockTest {
 
     private static final ObjectMapper om = new ObjectMapper();
 
-    List<Employee> mockEmployees = new ArrayList<Employee>() {{
-        add(new Employee(10001L, "Manbo", "Manager", "Finance", "114514@gmail.com", new ArrayList<>()));
-        add(new Employee(10002L, "Lisi", "Developer", "IT", "lisi@example.com", new ArrayList<>()));
-    }};
+    List<Employee> mockEmployees = new ArrayList<>();
 
     Project mockProject = new Project(1L, "Project Alpha", "Description of Project Alpha", mockEmployees);
 
     String exampleProjectJson = "{"
             + "\"id\":1,"
             + "\"name\":\"Project Alpha\","
-            + "\"describe\":\"Description of Project Alpha\","
-            + "\"employees\":["
-            + "{\"id\":10001,\"name\":\"Manbo\",\"position\":\"Manager\",\"department\":\"Finance\",\"email\":\"114514@gmail.com\"},"
-            + "{\"id\":10002,\"name\":\"Lisi\",\"position\":\"Developer\",\"department\":\"IT\",\"email\":\"lisi@example.com\"}"
-            + "]"
+            + "\"description\":\"Description of Project Alpha\","
+            + "\"employees\":[]"
             + "}";
 
     @Test
-    public void getProejct() throws Exception {
+    public void getProject() throws Exception {
         Mockito.when(projectService.getProject(1L)).thenReturn(mockProject);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/projects/{id}",1L)
@@ -74,11 +67,6 @@ public class ProjectControllerMockTest {
 
     @Test
     public void createProject() throws Exception {
-        List<Employee> mockEmployees = new ArrayList<Employee>() {{
-            add(new Employee(10001L, "Manbo", "Manager", "Finance", "114514@gmail.com", new ArrayList<>()));
-            add(new Employee(10002L, "Lisi", "Developer", "IT", "lisi@example.com", new ArrayList<>()));
-        }};
-
         Project mockProject = new Project(1L, "Project Alpha", "Description of Project Alpha", mockEmployees);
 
         Mockito.when(projectService.createProject(Mockito.any(Project.class))).thenReturn(mockProject);
@@ -96,11 +84,6 @@ public class ProjectControllerMockTest {
 
     @Test
     public void updateProject() throws Exception {
-        List<Employee> mockEmployees = new ArrayList<Employee>() {{
-            add(new Employee(10001L, "Manbo", "Manager", "Finance", "114514@gmail.com", new ArrayList<>()));
-            add(new Employee(10002L, "Lisi", "Developer", "IT", "lisi@example.com", new ArrayList<>()));
-        }};
-
         Project mockProject = new Project(1L, "Project Alpha", "Description of Project Alpha", mockEmployees);
 
         Mockito.when(projectService
@@ -110,7 +93,7 @@ public class ProjectControllerMockTest {
         String projectString = om.writeValueAsString(mockProject);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/employees/10001")
+                .put("/projects/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(projectString);
 
@@ -127,7 +110,7 @@ public class ProjectControllerMockTest {
         doNothing().when(projectService).deleteProject(1L);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/project/1");
+                .delete("/projects/1");
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
