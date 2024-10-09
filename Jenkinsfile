@@ -17,9 +17,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                docker.image('openjdk:17-jdk').inside('-v /root/.m2:/root/.m2') {
-                    sh 'mvn clean package'
-                }
+                sh 'docker run --rm -v "$PWD":/app -w /app -v /root/.m2:/root/.m2 openjdk:17-jdk mvn clean package'
             }
         }
 
