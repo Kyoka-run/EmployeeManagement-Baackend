@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY_CREDENTIALS = credentials('dockerhub')
         IMAGE_NAME = "kyoka74022/employee-management-backend"
         DOCKER_IMAGE_TAG = "latest"
         JAR_FILE = "target/employee-management-0.0.1-SNAPSHOT.jar"
@@ -32,12 +31,12 @@ pipeline {
         stage('Docker Push') {
    		steps {
         		script {
-            			docker.withRegistry('https://index.docker.io/v1/', REGISTRY_CREDENTIALS) {
-                		docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
-           			}
-        		}
-    		}
-	}
+            			docker.withRegistry('https://index.docker.io/v1/','dockerhub') {
+                			docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
+           				}
+        			}
+    			}
+		}
 
     }
 
