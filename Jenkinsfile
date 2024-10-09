@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY_CREDENTIALS = credentials('docker-hub-credentials')
+        REGISTRY_CREDENTIALS = credentials('dockerhub')
         IMAGE_NAME = "kyoka74022/employee-management-backend"
         DOCKER_IMAGE_TAG = "latest"
         JAR_FILE = "target/employee-management-0.0.1-SNAPSHOT.jar"
