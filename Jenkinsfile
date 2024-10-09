@@ -11,20 +11,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'git@github.com:Kyoka-run/EmployeeManagement-Backend.git', credentialsId: 'privatekey', branch: 'main'
+                git url: 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git', credentialsId: 'privatekey', branch: 'main'
             }
         }
 
         stage('Build') {
             steps {
-                bat "docker run --rm -v %cd%:/app -w /app -v C:/Users/<username>/.m2:/root/.m2 openjdk:17-jdk mvn clean package"
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Docker Build') {
             steps {
                 script {
-                    docker.build(IMAGE_NAME + ":" + DOCKER_IMAGE_TAG, "--build-arg JAR_FILE=${JAR_FILE} .")
+                    docker.build("${IMAGE_NAME}:${BUILD_NUMBER}", "--build-arg JAR_FILE=${JAR_FILE} .")
                 }
             }
         }
@@ -33,12 +33,11 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', REGISTRY_CREDENTIALS) {
-                        docker.image(IMAGE_NAME + ":" + DOCKER_IMAGE_TAG).push()
+                        docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
                     }
                 }
             }
         }
-    }
 
     post {
         success {
@@ -49,3 +48,4 @@ pipeline {
         }
     }
 }
+
