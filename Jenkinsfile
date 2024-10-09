@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'openjdk:17-jdk'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent any
 
     environment {
         REGISTRY_CREDENTIALS = credentials('docker-hub-credentials')
@@ -22,7 +17,9 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                docker.image('openjdk:17-jdk').inside('-v /root/.m2:/root/.m2') {
+                    sh 'mvn clean package'
+                }
             }
         }
 
