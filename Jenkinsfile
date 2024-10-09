@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'git@github.com:Kyoka-run/EmployeeManagement-Backend.git', credentialsId: 'privatekey'
+                git url: 'git@github.com:Kyoka-run/EmployeeManagement-Backend.git', credentialsId: 'privatekey', branch: 'main'
             }
         }
 
