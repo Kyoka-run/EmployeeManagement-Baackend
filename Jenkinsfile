@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git'
+                git 'git@github.com:Kyoka-run/EmployeeManagement-Backend.git'
             }
         }
 
