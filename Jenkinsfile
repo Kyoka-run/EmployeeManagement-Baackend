@@ -30,14 +30,15 @@ pipeline {
         }
 
         stage('Docker Push') {
-            steps {
-                script {
-                    docker.withRegistry('', REGISTRY_CREDENTIALS) {
-                        docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
-                    }
-                }
-            }
-        }
+   		steps {
+        		script {
+            			docker.withRegistry('https://index.docker.io/v1/', REGISTRY_CREDENTIALS) {
+                		docker.image("${IMAGE_NAME}:${BUILD_NUMBER}").push()
+           			}
+        		}
+    		}
+	}
+
     }
 
     post {
