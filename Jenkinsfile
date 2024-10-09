@@ -17,7 +17,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'docker run --rm -v "$PWD":/app -w /app -v /root/.m2:/root/.m2 openjdk:17-jdk mvn clean package'
+                bat "docker run --rm -v %cd%:/app -w /app -v C:/Users/<username>/.m2:/root/.m2 openjdk:17-jdk mvn clean package"
             }
         }
 
@@ -49,4 +49,3 @@ pipeline {
         }
     }
 }
-
