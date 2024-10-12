@@ -13,7 +13,6 @@ import com.employeemanagement.model.Employee;
 import com.employeemanagement.service.EmployeeService;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;

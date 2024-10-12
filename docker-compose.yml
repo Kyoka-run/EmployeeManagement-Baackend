@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  employeemanagement-network:
+    driver: bridge
+
 services:
   mysql-db:
     image: mysql:8.0
@@ -7,12 +11,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: Cinder1014
       MYSQL_DATABASE: employee_management
-      MYSQL_USER: root
+      MYSQL_USER: user
       MYSQL_PASSWORD: Cinder1014
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - employeemanagement-network
 
   backend:
     image: kyoka74022/employee-management-backend:latest
@@ -33,6 +39,8 @@ services:
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
     depends_on:
       - mysql-db
+    networks:
+      - employeemanagement-network
 
 volumes:
   mysql_data:

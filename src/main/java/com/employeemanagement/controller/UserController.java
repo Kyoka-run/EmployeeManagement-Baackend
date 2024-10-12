@@ -13,7 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = { "http://localhost:3000"})
 @Controller
 public class UserController {
 
