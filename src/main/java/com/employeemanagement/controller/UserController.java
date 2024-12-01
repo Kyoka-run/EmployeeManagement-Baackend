@@ -2,6 +2,7 @@ package com.employeemanagement.controller;
 
 import com.employeemanagement.dto.JwtRequest;
 import com.employeemanagement.dto.JwtResponse;
+import com.employeemanagement.dto.PasswordUpdateRequest;
 import com.employeemanagement.model.User;
 import com.employeemanagement.security.JwtUtils;
 import com.employeemanagement.service.UserService;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,6 +37,9 @@ public class UserController {
     private JwtUtils jwtTokenUtil;
 
     @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     private void authenticate(String username, String password) throws Exception {
@@ -46,6 +51,36 @@ public class UserController {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
     }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.findById(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/users/{id}/update-password")
+    public ResponseEntity<?> updatePassword(@PathVariable Long id, @RequestBody PasswordUpdateRequest request) {
+        User user = userService.findById(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // check old password
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Old password is incorrect");
+        }
+
+        // update password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userService.save(user);
+
+        return ResponseEntity.ok("Password updated successfully");
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
@@ -66,7 +101,10 @@ public class UserController {
 
             final String token = jwtTokenUtil.generateToken(userDetails);
 
-            return ResponseEntity.ok(new JwtResponse(token));
+            User user = userService.findByUsername(authenticationRequest.getUsername());
+            Long userId = user.getId();
+
+            return ResponseEntity.ok(new JwtResponse(token, userId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }

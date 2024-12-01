@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService, UserDetailsService{
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public Integer registerUser(User user) {
+    public Long registerUser(User user) {
         String passwd= user.getPassword();
         String encodedPasswod = passwordEncoder.encode(passwd);
         user.setPassword(encodedPasswod);
@@ -40,7 +40,12 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 
     @Override
     public User findById(Long id) {
-        return userRepo.findById(id);
+        return userRepo.findById(id).orElse(null);
+    }
+
+    @Override
+    public void save(User user) {
+        userRepo.save(user);
     }
 
     @Override

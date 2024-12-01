@@ -13,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name="user_id")
-    private Integer id;
+    private Long id;
 
     @Column(name="user_name")
     private String username;
@@ -32,18 +32,18 @@ public class User {
     public User() {
     }
 
-    public User(Integer id, String username, String password, List<String> roles) {
+    public User(Long id, String username, String password, List<String> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.roles = roles;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,5 +70,4 @@ public class User {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
-
 }
