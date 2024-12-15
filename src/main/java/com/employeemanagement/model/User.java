@@ -2,11 +2,8 @@ package com.employeemanagement.model;
 
 import javax.persistence.*;
 
-import lombok.Data;
-
 import java.util.List;
 
-@Data
 @Entity
 @Table(name="users")
 public class User {
@@ -30,13 +27,6 @@ public class User {
     private List<String> roles;
 
     public User() {
-    }
-
-    public User(Long id, String username, String password, List<String> roles) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.roles = roles;
     }
 
     public Long getId() {

@@ -16,8 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -101,15 +100,52 @@ public class EmployeeServiceMockTest {
 
     @Test
     public void updateEmployee() {
-        List<Project> mockProjects = new ArrayList<Project>() {{
-            add(new Project(1L, "Project Alpha", "Description of Project Alpha", new ArrayList<>()));
-            add(new Project(2L, "Project Beta", "Description of Project Beta", new ArrayList<>()));
-        }};
+        Employee employee = new Employee(1L, "Manbo", "Manager", "Finance", "114514@gmail.com", new ArrayList<>());
 
-        Employee employee = new Employee(10001L,"Manbo","Manager","Finance","114514@gmail.com", mockProjects);
-
+        when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
         when(employeeRepository.save(employee)).thenReturn(employee);
 
-        assertEquals(employee,employeeService.updateEmployee(employee,10001L));
+        assertEquals(employee, employeeService.updateEmployee(employee, 1L));
+    }
+
+    @Test
+    public void testEmployeeNotFound() {
+        when(employeeRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.getEmployee(1L);
+        });
+
+        assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.updateEmployee(new Employee(), 1L);
+        });
+
+        assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.deleteEmployee(1L);
+        });
+    }
+
+    @Test
+    public void testSearchEmployee() {
+        Long employeeId = 1L;
+        Employee mockEmployee = new Employee();
+        mockEmployee.setId(employeeId);
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(mockEmployee));
+
+        Optional<Employee> result = employeeService.searchEmployee(employeeId);
+
+        assertTrue(result.isPresent());
+        assertEquals(employeeId, result.get().getId());
+    }
+
+    @Test
+    public void testSearchEmployeeNotFound() {
+        Long employeeId = 999L;
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+        assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.searchEmployee(employeeId);
+        });
     }
 }
