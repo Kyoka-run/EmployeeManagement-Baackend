@@ -24,12 +24,12 @@ The Employee Management System is a comprehensive full-stack web application for
 ## ⚙️ Technologies Stack
 
 ### Back-end
-- **Framework: **Spring Boot 2.7.2
-- **Security: **Spring Security with JWT
-- **Database: **MySQL with JPA/Hibernate
-- **API Documentation: **Springdoc OpenAPI (Swagger)
-- **Testing: **JUnit, Mockito
-- **Build Tool: **Maven
+- **Framework: **		Spring Boot 2.7.2
+- **Security: **	Spring Security with JWT
+- **Database: **	MySQL with JPA/Hibernate
+- **API Documentation: **	Springdoc OpenAPI (Swagger)
+- **Testing: **	JUnit, Mockito
+- **Build Tool: **	Maven
 
 ### Front-end
 - **Framework: React **(Functional components with Hooks)
@@ -91,7 +91,6 @@ Start the React development server:
 ## 🧪 Testing
 
 ### Back-end
-	```bash
 	# Run all tests
 	mvn test
 
@@ -99,7 +98,6 @@ Start the React development server:
 	mvn jacoco:report
 
 ### Front-end
-	```bash
 	# Run all tests
 	npm test
 
@@ -112,8 +110,8 @@ Start the React development server:
 ## 📊 Swagger API Tests
 
 Swagger UI available at:
-```bash
-http://localhost:8080/swagger-ui.html
+	```bash
+	http://localhost:8080/swagger-ui.html
 
 ## 🛠  Application Screenshots
 
