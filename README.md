@@ -24,25 +24,25 @@ The Employee Management System is a comprehensive full-stack web application for
 ## ⚙️ Technologies Stack
 
 ### Back-end
-- **Framework: Spring Boot 2.7.2**
-- **Security: Spring Security with JWT**
-- **Database: MySQL with JPA/Hibernate**
-- **API Documentation: Springdoc OpenAPI (Swagger)**
-- **Testing: JUnit, Mockito**
-- **Build Tool: Maven**
+- **Framework: **Spring Boot 2.7.2
+- **Security: **Spring Security with JWT
+- **Database: **MySQL with JPA/Hibernate
+- **API Documentation: **Springdoc OpenAPI (Swagger)
+- **Testing: **JUnit, Mockito
+- **Build Tool: **Maven
 
 ### Front-end
-- **Framework: React (Functional components with Hooks)**
-- **UI Components: Material-UI (MUI)**
-- **HTTP Client: Axios**
-- **Form Handling: Formik**
-- **Testing: React Testing Library, Jest**
+- **Framework: React **(Functional components with Hooks)
+- **UI Components: **Material-UI (MUI)
+- **HTTP Client: **Axios
+- **Form Handling: **Formik
+- **Testing: **React Testing Library, Jest
   
 ### Development
-- **Containerization: Docker**
-- **Version Control: Git**
-- **API Testing: Swagger UI**
-- **CI/CD:  Jenkins**
+- **Containerization: **Docker
+- **Version Control: **Git
+- **API Testing: **Swagger UI
+- **CI/CD:  **Jenkins
 
 ## 📦 Installation & Setup
 
@@ -94,7 +94,6 @@ The Employee Management System is a comprehensive full-stack web application for
 ```bash
 # Run all tests
 mvn test
-
 # Generate coverage report
 mvn jacoco:report
 
@@ -102,10 +101,8 @@ mvn jacoco:report
 ```bash
 # Run all tests
 npm test
-
 # Run with coverage
 npm test -- --coverage
-
 # Run specific test file
 npm test -- LoginComponent.test.js
   
