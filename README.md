@@ -73,20 +73,20 @@ The Employee Management System is a comprehensive full-stack web application for
 ### Frontend Setup
 
 1. Install dependencies:
-    Navigate to the frontend directory and install dependencies:
-    ```bash
-    cd frontend
-    npm install
+Navigate to the frontend directory and install dependencies:
+```bash
+cd frontend
+npm install
 
 2. Configure API endpoint:
-    Start the React development server:
-    ```bash
-    // Update API_URL in service files if needed
-   const API_URL = 'http://localhost:8080';
+Start the React development server:
+```bash
+// Update API_URL in service files if needed
+const API_URL = 'http://localhost:8080';
 
 3. Start development server:
-    ```bash
-    npm start
+```bash
+npm start
 
 ## 🧪 Testing
 
