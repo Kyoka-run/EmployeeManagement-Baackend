@@ -74,37 +74,40 @@ The Employee Management System is a comprehensive full-stack web application for
 
 1. Install dependencies:
 Navigate to the frontend directory and install dependencies:
-```bash
-cd frontend
-npm install
+	```bash
+	cd frontend
+	npm install
 
 2. Configure API endpoint:
 Start the React development server:
-```bash
-// Update API_URL in service files if needed
-const API_URL = 'http://localhost:8080';
+	```bash
+	// Update API_URL in service files if needed
+	const API_URL = 'http://localhost:8080';
 
 3. Start development server:
-```bash
-npm start
+	```bash
+	npm start
 
 ## 🧪 Testing
 
 ### Back-end
-```bash
-# Run all tests
-mvn test
-# Generate coverage report
-mvn jacoco:report
+	```bash
+	# Run all tests
+	mvn test
+
+	# Generate coverage report
+	mvn jacoco:report
 
 ### Front-end
-```bash
-# Run all tests
-npm test
-# Run with coverage
-npm test -- --coverage
-# Run specific test file
-npm test -- LoginComponent.test.js
+	```bash
+	# Run all tests
+	npm test
+
+	# Run with coverage
+	npm test -- --coverage
+
+	# Run specific test file
+	npm test -- LoginComponent.test.js
   
 ## 📊 Swagger API Tests
 
