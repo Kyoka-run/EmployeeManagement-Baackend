@@ -1,51 +1,57 @@
 # Employee Management System - Spring Boot & React & My SQL
 
-## Project Overview
-The Employee Management System is a full-stack web application designed to manage employee and project information. It is built using Spring Boot for the back-end and React for the front-end, with MySQL as the database layer. This application supports CRUD operations for managing employees and projects and features user authentication and authorization.
+## 🎯 Project Overview
+The Employee Management System is a comprehensive full-stack web application for managing employees and projects, featuring secure user authentication, role-based authorization, and real-time data management. Built with Spring Boot, React, and MySQL.
 
-## Features
-- **User Authentication**: Secure login and logout functionality.
-- **Employee Management**: Add, update, and remove employee information.
-- **Project Management**: Assign employees to projects and track project progress.
-- **Many-to-Many Relationship Management**: When an employee or project is updated, the changes are reflected in all associated entities. 
-- **Search and Filter**: Search employees and projects by name with dynamic filtering.
-- **Bulk Delete**: Allows for the bulk deletion of employees and projects.
-- **Dashboard**: Managing and visualizing all key aspects.
-- **Success&Error Message**:Displayed when an action is completed.
+## ✨ Key Features
 
-## ⚙️ Technologies Used
+### User Authentication & Authorization
+- **JWT-based authentication**
+- **Role-based access control (ADMIN, EMPLOYEE_MANAGER, PROJECT_MANAGER, GUEST)**
+- **Secure password hashing with BCrypt**
+
+### Employee & Project  Management
+- **CRUD operations**
+- **Employee & Project details**
+- **Bulk operations**
+- **Real-time search and filtering**
+
+### Advanced Features
+- **Responsive Material-UI interface**
+- **Error handling and validation**
+- **Success/Error notifications**
+
+## ⚙️ Technologies Stack
+
+### Back-end
+- **Framework: Spring Boot 2.7.2**
+- **Security: Spring Security with JWT**
+- **Database: MySQL with JPA/Hibernate**
+- **API Documentation: Springdoc OpenAPI (Swagger)**
+- **Testing: JUnit, Mockito**
+- **Build Tool: Maven**
 
 ### Front-end
-- **React** (Functional components, hooks)
-- **Material-UI** (for UI components)
-- **Axios** (for HTTP requests)
+- **Framework: React (Functional components with Hooks)**
+- **UI Components: Material-UI (MUI)**
+- **HTTP Client: Axios**
+- **Form Handling: Formik**
+- **Testing: React Testing Library, Jest**
   
-### Back-end
-- **Spring Boot** (RESTful API development)
-- **Spring Security** (Authentication and Authorization)
-  
-### Database
-- **MySQL** (Relational database for storing employee and project data)
+### Development
+- **Containerization: Docker**
+- **Version Control: Git**
+- **API Testing: Swagger UI**
+- **CI/CD:  Jenkins**
 
-### npm Requirements
-- **nmp axios** 
-- **npm react-router-dom**
-- **@mui/material**
-- **@mui/icons-material**
-- **@mui/x-data-grid**
-
-### Other Software Tools
-- **MySQLWorkbench** (Store user information)
-- **Swagger** (Test PUT, GET, POST and DELETE requests)
-  
-## 📦 Installation Guide
+## 📦 Installation & Setup
 
 ### Prerequisites
 - **Java 17+**
-- **Node.js** (v16+)
-- **MySQL**
+- **Node.js 16+**
+- **MySQL 8.0+**
   
-### Steps to Set Up the Back-End (Spring Boot)
+### Backend Setup
 1. Clone the repository:  
    ```bash
    git clone https://github.com/Kyoka-run/EmployeeManagement-Project.git
@@ -61,11 +67,10 @@ The Employee Management System is a full-stack web application designed to manag
    spring.datasource.password=YOUR_MYSQL_PASSWORD
    spring.jpa.hibernate.ddl-auto=update
    spring.jpa.show-sql=true
-   spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 3. Run the application
 
-### Steps to Set Up the Front-End (React)
+### Frontend Setup
 
 1. Install dependencies:
     Navigate to the frontend directory and install dependencies:
@@ -73,27 +78,44 @@ The Employee Management System is a full-stack web application designed to manag
     cd frontend
     npm install
 
-2. Run the front-end application:
+2. Configure API endpoint:
     Start the React development server:
+    ```bash
+    // Update API_URL in service files if needed
+   const API_URL = 'http://localhost:8080';
+
+3. Start development server:
     ```bash
     npm start
 
-The application will be accessible at http://localhost:3000.
+## 🧪 Testing
 
-##  Backend Test Coverage
+### Back-end
+```bash
+# Run all tests
+mvn test
 
-The Employee Management System project includes implemented test coverage to ensure that the application functions as expected and to reduce the risk of defects.  You can run the tests using the following commands:
-    ```bash
-    # Run tests
-    ./mvnw test
+# Generate coverage report
+mvn jacoco:report
 
-    # Generate coverage report
-    ./mvnw test jacoco:report
-    
-##  Swagger API Tests
-![swagger](https://github.com/user-attachments/assets/8888cb83-6899-4910-b1ce-c6be837fb82e)
+### Front-end
+```bash
+# Run all tests
+npm test
 
-##  Application Screenshots
+# Run with coverage
+npm test -- --coverage
+
+# Run specific test file
+npm test -- LoginComponent.test.js
+  
+## 📊 Swagger API Tests
+
+Swagger UI available at:
+```bash
+http://localhost:8080/swagger-ui.html
+
+## 🛠  Application Screenshots
 
 ### Login Page 
 ![login](https://github.com/user-attachments/assets/953356be-0021-42a1-b525-0a9098eceded)
