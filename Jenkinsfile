@@ -1,58 +1,62 @@
 pipeline {
     agent any
-
     environment {
-        REPO_URL = 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git' // GitHub 仓库地址
-        IMAGE_NAME = 'kyoka74022/employee-management-backend'                     // Docker 镜像名称
-        AWS_EC2_IP = '3.252.231.197'                                             // EC2 实例的 IP 地址
-        SSH_KEY = credentials('ec2-ssh-key')                                     // Jenkins 中配置的 SSH 私钥凭证
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')                         // Docker Hub 凭证
+        IMAGE_NAME = "kyoka74022/employee-management-backend"
+        DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
+        JAR_FILE = "target/employee-management-0.0.1-SNAPSHOT.jar"
+        EC2_HOST = "ec2-user@3.252.231.197"
+        RDS_ENDPOINT = "employee-management-db.ctmcuac0g16u.eu-west-1.rds.amazonaws.com"
     }
-
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: "${REPO_URL}", credentialsId: 'privatekey'
+                git url: 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git', 
+                    credentialsId: 'privatekey', 
+                    branch: 'main'
             }
         }
 
-        stage('Build and Package') {
+        stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests' // 使用 Maven 构建
+                bat 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Docker Build') {
+            steps {
+                bat """
+                    docker build -t ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} .
+                    docker tag ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${IMAGE_NAME}:latest
+                """
+            }
+        }
+
+        stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat """
-                    docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
-                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
-                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
-                    docker push ${IMAGE_NAME}:${BUILD_NUMBER}
-                    docker push ${IMAGE_NAME}:latest
-                    docker logout
+                        docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+                        docker push ${IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                        docker push ${IMAGE_NAME}:latest
                     """
                 }
             }
         }
 
-        stage('Deploy to AWS EC2') {
+        stage('Deploy to EC2') {
             steps {
-                withCredentials([
-                    sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY'),
-                    usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
-                ]) {
-                    bat """
-                    powershell -Command '
-                    ssh -o StrictHostKeyChecking=no -i %SSH_KEY% ec2-user@${AWS_EC2_IP} "
-                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%;
-                    docker pull ${IMAGE_NAME}:${BUILD_NUMBER};
-                    docker stop backend || echo. >nul;
-                    docker rm backend || echo. >nul;
-                    docker run -d --name backend -p 8080:8080 ${IMAGE_NAME}:${BUILD_NUMBER};
-                    docker logout"
-                    '
+                sshagent(['ec2-ssh-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${EC2_HOST} '\
+                        docker pull ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && \
+                        docker stop backend || true && \
+                        docker rm backend || true && \
+                        docker run -d --name backend \
+                            -p 8080:8080 \
+                            -e SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/employee_management \
+                            -e SPRING_DATASOURCE_USERNAME=admin \
+                            -e SPRING_DATASOURCE_PASSWORD=Cinder1014 \
+                            ${IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
                     """
                 }
             }
@@ -60,17 +64,15 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Cleaning up Docker images locally...'
-            bat 'docker rmi ${IMAGE_NAME}:${BUILD_NUMBER} || echo Skipped'
-        }
         success {
             echo 'Deployment completed successfully!'
         }
         failure {
             echo 'Deployment failed!'
         }
+        always {
+            bat 'docker logout'
+        }
     }
 }
-
 
