@@ -35,9 +35,12 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([
+                    sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'KEY_FILE'),
+                    usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
+                ]) {
                     bat """
-                        ssh -i "C:\\codes\\EmployeeManagement\\employee-management-key.pem" -o StrictHostKeyChecking=no ec2-user@3.252.231.197 "docker login -u %DOCKER_USER% -p %DOCKER_PASS% && docker pull ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && docker stop backend || true && docker rm backend || true && docker run -d --name backend -p 8080:8080 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && docker logout"
+                        ssh -i "%KEY_FILE%" -o StrictHostKeyChecking=no ec2-user@3.252.231.197 "docker login -u %DOCKER_USER% -p %DOCKER_PASS% && docker pull ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && docker stop backend || true && docker rm backend || true && docker run -d --name backend -p 8080:8080 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && docker logout"
                     """
                 }
             }
