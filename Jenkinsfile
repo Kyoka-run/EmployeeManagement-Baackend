@@ -16,44 +16,44 @@ pipeline {
             }
         }
 
+        stage('Build and Package') {
+            steps {
+                bat 'mvn clean package -DskipTests' // 使用 Maven 构建
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                sh 'mvn clean package -DskipTests'
-                sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .'
-                sh 'docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest'
-            }
-        }
-
-        stage('Login to Docker Hub') {
-            steps {
-                sh '''
-                echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
-                '''
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                sh '''
-                docker push ${IMAGE_NAME}:${BUILD_NUMBER}
-                docker push ${IMAGE_NAME}:latest
-                '''
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat """
+                    docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
+                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
+                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+                    docker push ${IMAGE_NAME}:${BUILD_NUMBER}
+                    docker push ${IMAGE_NAME}:latest
+                    docker logout
+                    """
+                }
             }
         }
 
         stage('Deploy to AWS EC2') {
             steps {
-                sshagent (credentials: ['ec2-ssh-key']) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ${SSH_USER}@${AWS_EC2_IP} <<EOF
-                    echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
-                    docker pull ${IMAGE_NAME}:${BUILD_NUMBER}
-                    docker stop backend || true
-                    docker rm backend || true
-                    docker run -d --name backend -p 8080:8080 ${IMAGE_NAME}:${BUILD_NUMBER}
-                    docker logout
-                    EOF
-                    '''
+                withCredentials([
+                    sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY'),
+                    usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
+                ]) {
+                    bat """
+                    powershell -Command '
+                    ssh -o StrictHostKeyChecking=no -i %SSH_KEY% ec2-user@${AWS_EC2_IP} "
+                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%;
+                    docker pull ${IMAGE_NAME}:${BUILD_NUMBER};
+                    docker stop backend || echo. >nul;
+                    docker rm backend || echo. >nul;
+                    docker run -d --name backend -p 8080:8080 ${IMAGE_NAME}:${BUILD_NUMBER};
+                    docker logout"
+                    '
+                    """
                 }
             }
         }
@@ -62,7 +62,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up Docker images locally...'
-            sh 'docker rmi ${IMAGE_NAME}:${BUILD_NUMBER} || true'
+            bat 'docker rmi ${IMAGE_NAME}:${BUILD_NUMBER} || echo Skipped'
         }
         success {
             echo 'Deployment completed successfully!'
