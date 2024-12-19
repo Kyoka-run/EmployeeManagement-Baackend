@@ -34,17 +34,18 @@ pipeline {
         }
 
         stage('Deploy to EC2') {
-    steps {
-        withCredentials([
-            sshUserPrivateKey(credentialsId: 'ec2-ssh-key', usernameVariable: 'SSH_USER', keyFileVariable: 'SSH_KEY'),
-            usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
-        ]) {
-            bat '''
-                powershell -Command "ssh -o StrictHostKeyChecking=no -i $env:SSH_KEY $env:SSH_USER@3.252.231.197 \\"docker login -u $env:DOCKER_USER -p $env:DOCKER_PASS && docker pull %IMAGE_NAME%:%BUILD_NUMBER% && docker stop backend || true && docker rm backend || true && docker run -d --name backend -p 8080:8080 %IMAGE_NAME%:%BUILD_NUMBER% && docker logout\\""
-            '''
+            steps {
+                withCredentials([
+                    sshUserPrivateKey(credentialsId: 'ec2-ssh-key', usernameVariable: 'SSH_USER', keyFileVariable: 'SSH_KEY'),
+                    usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
+                ]) {
+                    bat '''
+                        powershell -Command "ssh -o StrictHostKeyChecking=no -i $env:SSH_KEY $env:SSH_USER@3.252.231.197 \\"docker login -u $env:DOCKER_USER -p $env:DOCKER_PASS && docker pull %IMAGE_NAME%:%BUILD_NUMBER% && docker stop backend || true && docker rm backend || true && docker run -d --name backend -p 8080:8080 %IMAGE_NAME%:%BUILD_NUMBER% && docker logout\\""
+                    '''
+                }
+            }
         }
     }
-}
 
     post {
         always {
