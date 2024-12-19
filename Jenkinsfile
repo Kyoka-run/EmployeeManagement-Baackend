@@ -2,53 +2,58 @@ pipeline {
     agent any
 
     environment {
-        EC2_HOST = '3.252.231.197' 
-        SSH_USER = 'ec2-user'
-        IMAGE_NAME = 'kyoka74022/employee-management-backend' 
+        REPO_URL = 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git' // GitHub 仓库地址
+        IMAGE_NAME = 'kyoka74022/employee-management-backend'                     // Docker 镜像名称
+        AWS_EC2_IP = '3.252.231.197'                                             // EC2 实例的 IP 地址
+        SSH_KEY = credentials('ec2-ssh-key')                                     // Jenkins 中配置的 SSH 私钥凭证
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')                         // Docker Hub 凭证
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git', credentialsId: 'privatekey'
+                git branch: 'main', url: "${REPO_URL}", credentialsId: 'privatekey'
             }
         }
-        stage('Build') {
+
+        stage('Build Docker Image') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
+                sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .'
+                sh 'docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest'
             }
         }
-        stage('Docker Build and Push') {
+
+        stage('Login to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    bat """
-                    docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
-                    docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
-                    docker login -u %DOCKER_USER% -p %DOCKER_PASS%
-                    docker push ${IMAGE_NAME}:${BUILD_NUMBER}
-                    docker push ${IMAGE_NAME}:latest
+                sh '''
+                echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
+                '''
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh '''
+                docker push ${IMAGE_NAME}:${BUILD_NUMBER}
+                docker push ${IMAGE_NAME}:latest
+                '''
+            }
+        }
+
+        stage('Deploy to AWS EC2') {
+            steps {
+                sshagent (credentials: ['ec2-ssh-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ${SSH_USER}@${AWS_EC2_IP} <<EOF
+                    echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
+                    docker pull ${IMAGE_NAME}:${BUILD_NUMBER}
+                    docker stop backend || true
+                    docker rm backend || true
+                    docker run -d --name backend -p 8080:8080 ${IMAGE_NAME}:${BUILD_NUMBER}
                     docker logout
-                    """
-                }
-            }
-        }
-        stage('Deploy to EC2') {
-            steps {
-                withCredentials([
-                    sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY'),
-                    usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
-                ]) {
-                    bat """
-                    powershell -Command '
-                    ssh -o StrictHostKeyChecking=no -i %SSH_KEY% %SSH_USER%@${EC2_HOST} "
-                    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS};
-                    docker pull ${IMAGE_NAME}:${BUILD_NUMBER};
-                    docker stop backend || echo. >nul;
-                    docker rm backend || echo. >nul;
-                    docker run -d --name backend -p 8080:8080 ${IMAGE_NAME}:${BUILD_NUMBER};
-                    docker logout"
-                    '
-                    """
+                    EOF
+                    '''
                 }
             }
         }
@@ -56,14 +61,14 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up...'
-            bat 'docker logout'
+            echo 'Cleaning up Docker images locally...'
+            sh 'docker rmi ${IMAGE_NAME}:${BUILD_NUMBER} || true'
         }
         success {
-            echo 'Pipeline executed successfully!'
+            echo 'Deployment completed successfully!'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Deployment failed!'
         }
     }
 }
