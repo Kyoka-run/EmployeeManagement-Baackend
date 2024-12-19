@@ -2,11 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = credentials('dockerhub')
-        SSH_KEY = credentials('ec2-ssh-key')
+        EC2_HOST = '3.252.231.197' 
         SSH_USER = 'ec2-user'
-        EC2_HOST = '3.252.231.197'
-        IMAGE_NAME = 'kyoka74022/employee-management-backend'
+        IMAGE_NAME = 'kyoka74022/employee-management-backend' 
     }
 
     stages {
@@ -36,7 +34,10 @@ pipeline {
         }
         stage('Deploy to EC2') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                withCredentials([
+                    sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY'),
+                    usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
+                ]) {
                     bat """
                     powershell -Command '
                     ssh -o StrictHostKeyChecking=no -i %SSH_KEY% %SSH_USER%@${EC2_HOST} "
@@ -55,6 +56,7 @@ pipeline {
 
     post {
         always {
+            echo 'Cleaning up...'
             bat 'docker logout'
         }
         success {
