@@ -40,7 +40,7 @@ pipeline {
                     usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')
                 ]) {
                     bat '''
-                        powershell -Command "ssh -o StrictHostKeyChecking=no -i $env:SSH_KEY $env:SSH_USER@3.252.231.197 \\"docker login -u $env:DOCKER_USER -p $env:DOCKER_PASS && docker pull kyoka74022/employee-management-backend:${BUILD_NUMBER} && docker stop backend; docker rm backend; docker run -d --name backend -p 8080:8080 kyoka74022/employee-management-backend:${BUILD_NUMBER} && docker logout\\""
+                        powershell -Command "ssh -o StrictHostKeyChecking=no -i $env:SSH_KEY $env:SSH_USER@3.252.231.197 \\"docker login -u $env:DOCKER_USER -p $env:DOCKER_PASS; docker pull kyoka74022/employee-management-backend:${BUILD_NUMBER}; docker stop backend || true; docker rm backend || true; docker run -d --name backend -p 8080:8080 kyoka74022/employee-management-backend:${BUILD_NUMBER}; docker logout\\""
                     '''
                 }
             }
@@ -53,3 +53,4 @@ pipeline {
         }
     }
 }
+
