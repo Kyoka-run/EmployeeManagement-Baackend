@@ -44,23 +44,17 @@ pipeline {
         }
 
         stage('Deploy to EC2') {
-            steps {
-                sshagent(['ec2-ssh-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${EC2_HOST} '\
-                        docker pull ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && \
-                        docker stop backend || true && \
-                        docker rm backend || true && \
-                        docker run -d --name backend \
-                            -p 8080:8080 \
-                            -e SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/employee_management \
-                            -e SPRING_DATASOURCE_USERNAME=admin \
-                            -e SPRING_DATASOURCE_PASSWORD=Cinder1014 \
-                            ${IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
-                    """
-                }
-            }
+    steps {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+            powershell """
+                \$key = Get-Content ${SSH_KEY}
+                Set-Content -Path "\$env:USERPROFILE\\.ssh\\id_rsa" -Value \$key
+                ssh -o StrictHostKeyChecking=no ${EC2_HOST} "docker pull ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && docker stop backend || true && docker rm backend || true && docker run -d --name backend -p 8080:8080 -e SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/employee_management -e SPRING_DATASOURCE_USERNAME=admin -e SPRING_DATASOURCE_PASSWORD=Cinder1014 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                Remove-Item "\$env:USERPROFILE\\.ssh\\id_rsa" -Force
+            """
         }
+    }
+}
     }
 
     post {
