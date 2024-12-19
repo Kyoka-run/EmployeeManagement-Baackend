@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = credentials('docker-username')
-        DOCKER_PASS = credentials('docker-password')
+        DOCKER_USER = credentials('dockerhub')
         SSH_KEY = credentials('ec2-ssh-key')
         SSH_USER = 'ec2-user'
         EC2_HOST = '3.252.231.197'
@@ -13,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git'
+                git branch: 'main', url: 'https://github.com/Kyoka-run/EmployeeManagement-Backend.git', credentialsId: 'privatekey'
             }
         }
         stage('Build') {
@@ -23,7 +22,7 @@ pipeline {
         }
         stage('Docker Build and Push') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     bat """
                     docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
                     docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
@@ -41,7 +40,7 @@ pipeline {
                     bat """
                     powershell -Command '
                     ssh -o StrictHostKeyChecking=no -i %SSH_KEY% %SSH_USER%@${EC2_HOST} "
-                    docker login -u $env.DOCKER_USER -p $env.DOCKER_PASS;
+                    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS};
                     docker pull ${IMAGE_NAME}:${BUILD_NUMBER};
                     docker stop backend || echo. >nul;
                     docker rm backend || echo. >nul;
@@ -56,7 +55,9 @@ pipeline {
 
     post {
         always {
-            bat 'docker logout'
+            node {
+                bat 'docker logout'
+            }
         }
         success {
             echo 'Pipeline executed successfully!'
