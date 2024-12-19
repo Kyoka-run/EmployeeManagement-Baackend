@@ -46,21 +46,9 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sshagent(['ec2-ssh-key']) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${EC2_HOST} '
-                                echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin && \
-                                docker pull ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && \
-                                docker stop backend || true && \
-                                docker rm backend || true && \
-                                docker run -d --name backend \
-                                    -p 8080:8080 \
-                                    -e SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/employee_management \
-                                    -e SPRING_DATASOURCE_USERNAME=admin \
-                                    -e SPRING_DATASOURCE_PASSWORD=Cinder1014 \
-                                    ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && \
-                                docker logout
-                            '
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        bat """
+                            ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no ${EC2_HOST} "docker login -u %DOCKER_USER% -p %DOCKER_PASS% && docker pull ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && docker stop backend || true && docker rm backend || true && docker run -d --name backend -p 8080:8080 -e SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/employee_management -e SPRING_DATASOURCE_USERNAME=admin -e SPRING_DATASOURCE_PASSWORD=Cinder1014 ${IMAGE_NAME}:${DOCKER_IMAGE_TAG} && docker logout"
                         """
                     }
                 }
