@@ -76,7 +76,7 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000",
-				"http://kyoka-employee-management-react-app.s3-website-us-east-1.amazonaws.com"
+				"http://employee-management-frontend-kyoka.s3-website-eu-west-1.amazonaws.com"
 		));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"));
 		configuration.setAllowedHeaders(Arrays.asList("*"));
