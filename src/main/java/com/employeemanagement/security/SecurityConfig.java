@@ -49,7 +49,7 @@ public class SecurityConfig {
 				.antMatchers("/admin/**").hasAuthority("ADMIN")
 				.anyRequest().authenticated()
 				.and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 设置为无状态
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authenticationProvider(authenticationProvider());
 
@@ -76,7 +76,8 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000",
-				"http://employee-management-frontend-kyoka.s3-website-eu-west-1.amazonaws.com"
+				"http://employee-management-frontend-kyoka.s3-website-eu-west-1.amazonaws.com",
+				"http://3.252.231.197:8080"
 		));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"));
 		configuration.setAllowedHeaders(Arrays.asList("*"));
