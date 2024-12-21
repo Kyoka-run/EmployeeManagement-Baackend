@@ -3,6 +3,17 @@
 ## 🎯 Project Overview
 The Employee Management System is a comprehensive full-stack web application for managing employees and projects, featuring secure user authentication, role-based authorization, and real-time data management. Built with Spring Boot, React, and MySQL.
 
+The project consists of two main repositories:
+- Backend Repository: [`EmployeeManagement-Backend`][backend]
+- Frontend Repository: [`EmployeeManagement-Frontend`][frontend]
+
+The application is deployed and accessible through AWS:
+[`Live Demo`][demo]
+
+[backend]: https://github.com/Kyoka-run/EmployeeManagement-Backend
+[frontend]: https://github.com/Kyoka-run/EmployeeManagement-Frontend  
+[demo]: http://employee-management-frontend-kyoka.s3-website-eu-west-1.amazonaws.com
+
 ## ✨ Key Features
 
 ### User Authentication & Authorization
