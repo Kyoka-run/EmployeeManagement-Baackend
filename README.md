@@ -55,6 +55,27 @@ The application is deployed and accessible through AWS:
 - **API Testing:** Swagger UI
 - **CI/CD:** Jenkins
 
+### Architecture
+![Flowchart](https://github.com/user-attachments/assets/768dadec-9474-4386-b9b9-d9f037e0bacb)
+
+
+## 🔍 Code Quality & Test Coverage
+
+### Backend Test Coverage Results
+![backend-coverage](https://github.com/user-attachments/assets/b6a79c53-99e0-407c-8d87-de87fbbf198b)
+
+### Frontend Test Coverage Results 
+![frontend-coverage](https://github.com/user-attachments/assets/90910b80-08c4-4681-8a31-9006e7c67c5f)
+
+  
+## 📊 Swagger API Tests
+
+### API Documentation Access
+- **Local Environment**: Access Swagger UI at `http://localhost:8080/swagger-ui.html`
+- **Production Environment**: Access Swagger UI at `http://3.252.231.197:8080/swagger-ui.html`
+![api document](https://github.com/user-attachments/assets/cff3d1b7-5c95-470f-8114-d95d166eebb2)
+
+
 ## 📦 Installation & Setup
 
 ### Prerequisites
@@ -124,13 +145,6 @@ npm test -- --coverage
 
 # Run specific test file
 npm test -- LoginComponent.test.js
-```
-  
-## 📊 Swagger API Tests
-
-Swagger UI available at:
-```
-http://localhost:8080/swagger-ui.html
 ```
 
 ## 🛠 Application Screenshots
