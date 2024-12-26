@@ -72,7 +72,6 @@ The application is deployed and accessible through AWS:
 
 ### API Documentation Access
 - **Local Environment**: Access Swagger UI at `http://localhost:8080/swagger-ui.html`
-- **Production Environment**: Access Swagger UI at `http://3.252.231.197:8080/swagger-ui.html`
 ![api document](https://github.com/user-attachments/assets/cff3d1b7-5c95-470f-8114-d95d166eebb2)
 
 
@@ -150,31 +149,27 @@ npm test -- LoginComponent.test.js
 ## 🛠 Application Screenshots
 
 ### Login Page 
-![login](https://github.com/user-attachments/assets/953356be-0021-42a1-b525-0a9098eceded)
-
-### Logout Page 
-![logout](https://github.com/user-attachments/assets/ae51b60b-21b2-47c2-a19b-cb995e45b874)
-
-### Register Page 
-![register](https://github.com/user-attachments/assets/8afd65a6-3db1-43db-850b-fbe3d49c6118)
+![login](https://github.com/user-attachments/assets/44b5ca1b-1627-4859-8ea7-c5a92174438f)
 
 ### Employee List Page 
-![employee list](https://github.com/user-attachments/assets/09d52193-7fbb-455a-a6c9-f4114d99f854)
+![employeelist](https://github.com/user-attachments/assets/d5716003-d147-45d7-943a-fd8c31830537)
 
 ### Project List Page 
-![project list](https://github.com/user-attachments/assets/1750b88d-7c16-4bf2-a296-788b42d50acc)
+![projectlist](https://github.com/user-attachments/assets/d95731fe-984a-4186-a6c0-46a2bec6ec39)
 
 ### Dashboard Page 
-![dashboard](https://github.com/user-attachments/assets/ccd6ea91-701f-46c8-ab91-34f253b104aa)
+![menu](https://github.com/user-attachments/assets/b3253e9d-db44-432d-bad2-20c78f5b2bd2)
 
-### Update Employee Page 
-![update employee](https://github.com/user-attachments/assets/00a83f51-828e-40f2-80c9-9e0b7437095b)
+### Update/Add Employee Page 
+![updateemployee](https://github.com/user-attachments/assets/07013728-a620-428b-9e85-7f71f64e973a)
 
-### Create Project Page 
-![create project](https://github.com/user-attachments/assets/5122b5b1-9748-4d30-bb7f-7b0cd4cff0da)
+### Employee Detail Page 
+![employeedetail](https://github.com/user-attachments/assets/c9eaf8ee-4716-4ed1-a211-11924e12c7a1)
 
-### Search Function Page 
-![search function](https://github.com/user-attachments/assets/c7c23662-7fc3-4eee-a600-df2880793d0d)
+### Change Password Page 
+![changepassword](https://github.com/user-attachments/assets/5c03fed3-2f63-423e-a567-23740dc12e0d)
 
-### Bulk Delete Page 
-![bulk delete](https://github.com/user-attachments/assets/909b8bb7-ca4a-47fe-a5cd-d9e30b52efd0)
+
+
+
+
